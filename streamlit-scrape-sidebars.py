@@ -10,13 +10,13 @@ def scrape_sidebar_urls(urls):
     sidebar_urls = []
 
     for url in urls:
-        response = requests.get(url)
-        if response.status_code == 200:
-            # Get the script tag from HTML
+        try:
+            response = requests.get(url)
+            response.raise_for_status()  # Check for successful response
+
             soup = BeautifulSoup(response.content, 'html.parser')
             script_tag = soup.find('script', id='__NEXT_DATA__')
 
-            # Get data from the script
             if script_tag:
                 script_content = script_tag.string
                 script_json = json.loads(script_content)
@@ -26,26 +26,28 @@ def scrape_sidebar_urls(urls):
                     sidebar_items = page_props.get('sidebar', {}).get('items', [{}])
                     sidebar_type = page_props.get('sidebar', {}).get('name', '')
 
-                if sidebar and sidebar_items:
-                    for item in sidebar_items:
-                        sidebarSectionName = item.get('name', '')
-                        heading = item.get('heading', '')
-                        items = item.get('items', [])
-                        for sidebaraurl in items:
-                            urlPathWithAncestry = sidebaraurl.get('urlPathWithAncestry', '')
-                            if urlPathWithAncestry:
-                                sidebar_urls.append({
-                                    'URL': url,
-                                    'Heading': heading,
-                                    'SidebarURL': urlPathWithAncestry,
-                                    'Sidebar Type': sidebar_type
-                                })
+                    if sidebar and sidebar_items:
+                        for item in sidebar_items:
+                            sidebarSectionName = item.get('name', '')
+                            heading = item.get('heading', '')
+                            items = item.get('items', [])
+                            for sidebaraurl in items:
+                                urlPathWithAncestry = sidebaraurl.get('urlPathWithAncestry', '')
+                                if urlPathWithAncestry:
+                                    sidebar_urls.append({
+                                        'URL': url,
+                                        'Heading': heading,
+                                        'SidebarURL': urlPathWithAncestry,
+                                        'Sidebar Type': sidebar_type
+                                    })
+                    else:
+                        st.warning('No sidebar found for ' + url)
                 else:
-                    st.warning('No sidebar found for ' + url)
+                    st.warning(f"No script tag with id '__NEXT_DATA__' found in {url}")
             else:
                 st.warning(f"No script tag with id '__NEXT_DATA__' found in {url}")
-        else:
-            st.warning(f"Failed to fetch {url}. Status code: {response.status_code}")
+        except requests.exceptions.RequestException as e:
+            st.warning(f"Failed to fetch {url}. Error: {e}")
 
     return sidebar_urls
 
