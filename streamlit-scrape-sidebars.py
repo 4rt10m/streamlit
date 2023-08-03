@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import json
 import csv
 import streamlit as st
+import pandas as pd
+import io
 
 def scrape_sidebar_urls(urls):
     sidebar_urls = []
@@ -60,15 +62,11 @@ def main():
             sidebar_urls = scrape_sidebar_urls(urls)
             if sidebar_urls:
                 # Display the scraped data in a table
-                st.table(sidebar_urls)
-                # Export to CSV
-                output_file = 'enyoMZ_sidebar_urls-all-pages.csv'
-                with open(output_file, 'w', newline='') as file:
-                    writer = csv.writer(file)
-                    writer.writerow(['URL', 'Heading', 'SidebarURL', 'Sidebar Type'])
-                    for row in sidebar_urls:
-                        writer.writerow([row['URL'], row['Heading'], row['SidebarURL'], row['Sidebar Type']])
-                st.success(f"Data exported to {output_file} successfully.")
+                st.table(pd.DataFrame(sidebar_urls))
+                # Export to CSV and provide download link
+                csv_file = pd.DataFrame(sidebar_urls).to_csv(index=False)
+                st.download_button(label="Download CSV", data=io.StringIO(csv_file), file_name='enyoMZ_sidebar_urls-all-pages.csv', mime='text/csv')
+                st.success("Data exported to CSV successfully.")
             else:
                 st.warning('No data found. Make sure the URLs are correct and the sidebar exists.')
         else:
