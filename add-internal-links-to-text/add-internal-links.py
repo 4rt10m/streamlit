@@ -15,12 +15,14 @@ def main():
 
     st.subheader("Add Links:")
     urls_anchors = []
+    i = 1
     while True:
-        url = st.text_input("URL:")
-        anchor = st.text_input("Anchor Text:")
+        url = st.text_input(f"URL {i}:")
+        anchor = st.text_input(f"Anchor Text {i}:")
         if not url or not anchor:
             break
         urls_anchors.append([url, anchor])
+        i += 1
 
     input_text = st.text_area("Input Text", value="", height=200)
     result = add_internal_links(input_text, urls_anchors)
