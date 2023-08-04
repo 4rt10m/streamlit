@@ -25,10 +25,11 @@ def main():
         i += 1
 
     input_text = st.text_area("Input Text", value="", height=200)
-    result = add_internal_links(input_text, urls_anchors)
-
-    st.subheader("Result:")
-    st.markdown(result, unsafe_allow_html=True)
+    
+    if st.button("Generate Output"):
+        result = add_internal_links(input_text, urls_anchors)
+        st.subheader("Result:")
+        st.markdown(result, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
