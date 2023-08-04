@@ -22,10 +22,11 @@ def main():
             break
         urls_anchors.append([url, anchor])
 
-    result = add_internal_links("", urls_anchors)
+    input_text = st.text_area("Input Text", value="", height=200)
+    result = add_internal_links(input_text, urls_anchors)
 
     st.subheader("Result:")
-    st.text_area("Result", value=result, height=200, key="result")
+    st.markdown(result, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
