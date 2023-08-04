@@ -17,15 +17,19 @@ def main():
     urls_anchors = []
     i = 1
     while True:
-        url = st.text_input(f"URL {i}:")
-        anchor = st.text_input(f"Anchor Text {i}:")
+        col1, col2 = st.beta_columns(2)
+        with col1:
+            url = st.text_input(f"URL {i}:")
+        with col2:
+            anchor = st.text_input(f"Anchor Text {i}:")
+
         if not url or not anchor:
             break
         urls_anchors.append([url, anchor])
         i += 1
 
     input_text = st.text_area("Input Text", value="", height=200)
-    
+
     if st.button("Generate Output"):
         result = add_internal_links(input_text, urls_anchors)
         st.subheader("Result:")
