@@ -4,13 +4,16 @@ from itertools import permutations
 st.title("Slug Combinations Generator")
 
 # Input fields for Slug 1 and Slug 2
-slug1 = st.text_input("Slug 1", "")
-slug2 = st.text_input("Slug 2", "")
+slug1 = st.text_input("Slug 1 (comma-separated)", "")
+slug2 = st.text_input("Slug 2 (comma-separated)", "")
 
 # Function to generate combinations
 def generate_combinations(slug1, slug2):
-    slugs = [slug1, slug2]
-    combinations = ['/'.join(perm) for perm in permutations(slugs)]
+    slugs1 = slug1.split(',')
+    slugs2 = slug2.split(',')
+    
+    # Generate all permutations of the slugs
+    combinations = [f"{s1.strip()}/{s2.strip()}" for s1 in slugs1 for s2 in slugs2]
     return combinations
 
 # Generate combinations and display
